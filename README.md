@@ -14,7 +14,7 @@ Este projeto consiste em um **Sistema Bancário** simples desenvolvido em Python
 
 ### Interface Gráfica com `tkinter`
 
-Recentemente, o projeto recebeu um **upgrade significativo** com a adição de uma **interface gráfica** utilizando a biblioteca `tkinter`. A interface gráfica melhora a usabilidade do sistema, tornando-o mais intuitivo e visualmente agradável. Com essa atualização, os usuários podem interagir com o sistema por meio de uma janela gráfica, facilitando a realização de operações bancárias.
+A interface gráfica melhora a usabilidade do sistema, tornando-o mais intuitivo e visualmente agradável. Com essa atualização, os usuários podem interagir com o sistema por meio de uma janela gráfica, facilitando a realização de operações bancárias.
 
 ## Como Executar o Projeto
 
