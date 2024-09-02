@@ -1,66 +1,89 @@
-menu = """
+import tkinter as tk
+from tkinter import messagebox
 
-[d] Depositar
-[s] Sacar
-[e] Extrato
-[q] Sair
+# Funções de operação
+def depositar():
+    global saldo
+    valor = float(entry_valor.get())
+    if valor > 0:
+        saldo += valor
+        atualizar_extrato(f"Depósito: R$ {valor:.2f}")
+        atualizar_saldo()
+    else:
+        messagebox.showerror("Erro", "O valor informado é inválido.")
 
-=> """
+def sacar():
+    global saldo, numero_saques
+    valor = float(entry_valor.get())
+    excedeu_saldo = valor > saldo
+    excedeu_limite = valor > limite
+    excedeu_saques = numero_saques >= LIMITE_SAQUES
 
+    if excedeu_saldo:
+        messagebox.showerror("Erro", "Você não tem saldo suficiente.")
+    elif excedeu_limite:
+        messagebox.showerror("Erro", "O valor diário do saque excede o limite.")
+    elif excedeu_saques:
+        messagebox.showerror("Erro", "Número máximo de saques diários excedido.")
+    elif valor > 0:
+        saldo -= valor
+        numero_saques += 1
+        atualizar_extrato(f"Saque: R$ {valor:.2f}")
+        atualizar_saldo()
+    else:
+        messagebox.showerror("Erro", "O valor informado é inválido.")
+
+def mostrar_extrato():
+    if extrato:
+        messagebox.showinfo("Extrato", extrato)
+    else:
+        messagebox.showinfo("Extrato", "Não foram realizadas movimentações.")
+
+def atualizar_extrato(movimentacao):
+    global extrato
+    extrato += movimentacao + "\n"
+
+def atualizar_saldo():
+    label_saldo.config(text=f"Saldo: R$ {saldo:.2f}")
+
+# Configurações iniciais
 saldo = 0
 limite = 500
 extrato = ""
 numero_saques = 0
 LIMITE_SAQUES = 3
 
-while True:
+# Interface Gráfica
+root = tk.Tk()
+root.title("Sistema Bancário")
 
-    opcao = input(menu)
+# Layout
+frame = tk.Frame(root, padx=10, pady=10)
+frame.pack(padx=10, pady=10, fill='both', expand=True)
 
-    if opcao == "d":
-        valor = float(input("Informe o valor do depósito: "))
+label_saldo = tk.Label(frame, text=f"Saldo: R$ {saldo:.2f}", font=('Arial', 14))
+label_saldo.grid(row=0, column=0, columnspan=2, pady=10, sticky='w')
 
-        if valor > 0:
-            saldo += valor
-            extrato += f"Depósito: R$ {valor:.2f}\n"
+label_valor = tk.Label(frame, text="Valor:")
+label_valor.grid(row=1, column=0, sticky='e')
 
-        else:
-            print("Operação falhou! O valor informado é inválido.")
+entry_valor = tk.Entry(frame)
+entry_valor.grid(row=1, column=1, padx=5)
 
-    elif opcao == "s":
-        valor = float(input("Lembrando que o limite do valor do saque diário é 500 reais. dInforme o valor do saque: "))
+button_depositar = tk.Button(frame, text="Depositar", command=depositar)
+button_depositar.grid(row=2, column=0, pady=5, padx=5, sticky='ew')
 
-        excedeu_saldo = valor > saldo
+button_sacar = tk.Button(frame, text="Sacar", command=sacar)
+button_sacar.grid(row=2, column=1, pady=5, padx=5, sticky='ew')
 
-        excedeu_limite = valor > limite
+button_extrato = tk.Button(frame, text="Extrato", command=mostrar_extrato)
+button_extrato.grid(row=3, column=0, columnspan=2, pady=5, padx=5, sticky='ew')
 
-        excedeu_saques = numero_saques >= LIMITE_SAQUES
+button_sair = tk.Button(frame, text="Sair", command=root.quit)
+button_sair.grid(row=4, column=0, columnspan=2, pady=5, padx=5, sticky='ew')
 
-        if excedeu_saldo:
-            print("Operação falhou! Você não tem saldo suficiente.")
+# Ajusta o peso das colunas para expansão
+frame.columnconfigure(0, weight=1)
+frame.columnconfigure(1, weight=1)
 
-        elif excedeu_limite:
-            print("Operação falhou! O valor diário do saque excede o limite.")
-
-        elif excedeu_saques:
-            print("Operação falhou! Número máximo de saques diários excedido.")
-
-        elif valor > 0:
-            saldo -= valor
-            extrato += f"Saque: R$ {valor:.2f}\n"
-            numero_saques += 1
-
-        else:
-            print("Operação falhou! O valor informado é inválido.")
-
-    elif opcao == "e":
-        print("\n================ EXTRATO ================")
-        print("Não foram realizadas movimentações." if not extrato else extrato)
-        print(f"\nSaldo: R$ {saldo:.2f}")
-        print("==========================================")
-
-    elif opcao == "q":
-        break
-
-    else:
-        print("Operação inválida, por favor selecione novamente a operação desejada.")
+root.mainloop()
